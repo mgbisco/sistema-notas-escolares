@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#2563eb">
+  <meta name="description" content="Sistema de Notas Escolar PWA">
+  <title>Sistema Escolar PRO+</title>
+
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <div id="loginBox" class="card animate">
+    <div class="login-icon">📘</div>
+    <h2>Sistema de Notas</h2>
+    <p class="login-sub">Selecione seu perfil para continuar</p>
+
+    <label class="field-label">Usuário</label>
+    <select id="listaUsuarios"></select>
+    <button onclick="login()">Entrar</button>
+
+    <div class="divider">ou cadastre um novo usuário</div>
+
+    <label class="field-label">Novo usuário</label>
+    <div class="novo-usuario">
+      <input id="novoUsuario" placeholder="Digite o nome..." maxlength="30">
+      <button onclick="cadastrarUsuario()" class="btn-secondary">+ Adicionar</button>
+    </div>
+  </div>
+
+  <!-- SISTEMA -->
+  <div id="sistema" style="display:none;">
+
+    <div class="top-bar">
+      <div class="top-title">
+        <span class="top-icon">📘</span>
+        <div>
+          <h1>Sistema de Notas</h1>
+          <span id="nomeUsuario" class="usuario-label"></span>
+        </div>
+      </div>
+      <div class="acoes-topo">
+        <button onclick="exportarPDF()" title="Exportar PDF">📄 <span class="btn-label">PDF</span></button>
+        <button onclick="toggleDarkMode()" id="btnDark" title="Modo escuro">🌙</button>
+        <button onclick="confirmarLogout()" class="btn-danger" title="Sair">🚪 <span class="btn-label">Sair</span></button>
+      </div>
+    </div>
+
+    <div class="grid-dashboard">
+
+      <!-- CADASTRO -->
+      <div class="card animate">
+        <h3>➕ Cadastrar Disciplina</h3>
+        <input id="nomeDisciplina" placeholder="Ex: Matemática" maxlength="40">
+        <button onclick="cadastrarDisciplina()">+ Cadastrar</button>
+      </div>
+
+      <!-- NOTAS -->
+      <div class="card animate">
+        <h3>📝 Lançar Notas</h3>
+        <select id="disciplinaSelect" onchange="carregarNotasDisciplina()"></select>
+        <div class="inputs-label">
+          <span>N1</span><span>N2</span><span>N3</span><span>N4</span><span>N5</span>
+        </div>
+        <div class="inputs">
+          <input class="nota" placeholder="0.0" type="number" min="0" max="10" step="0.1">
+          <input class="nota" placeholder="0.0" type="number" min="0" max="10" step="0.1">
+          <input class="nota" placeholder="0.0" type="number" min="0" max="10" step="0.1">
+          <input class="nota" placeholder="0.0" type="number" min="0" max="10" step="0.1">
+          <input class="nota" placeholder="0.0" type="number" min="0" max="10" step="0.1">
+        </div>
+        <button onclick="salvarNotas()" style="margin-top:4px;">💾 Salvar Notas</button>
+      </div>
+
+      <!-- RESULTADOS -->
+      <div class="card animate full">
+        <h3>📋 Resultados</h3>
+        <div id="listaDisciplinas"></div>
+        <p id="semDisciplinas" class="empty-msg">Nenhuma disciplina cadastrada ainda.</p>
+      </div>
+
+      <!-- GRÁFICO -->
+      <div class="card animate full">
+        <h3>📊 Desempenho</h3>
+        <div class="chart-wrap">
+          <canvas id="graficoDisciplinas"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
