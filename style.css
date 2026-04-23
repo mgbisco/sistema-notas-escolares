@@ -1,162 +1,319 @@
-/* === RESET & VARIÁVEIS === */
+/* =====================================================================
+   RESET GLOBAL E VARIÁVEIS CSS
+   Esta primeira seção é a base de todo o estilo — é executada antes
+   de qualquer outra regra do arquivo.
+====================================================================== */
+
 *, *::before, *::after {
   margin: 0; padding: 0;
   box-sizing: border-box;
 }
+/*
+  Seletor universal (*): aplica as regras a TODOS os elementos HTML.
+  *::before e *::after: inclui os pseudo-elementos (conteúdo gerado por CSS).
+
+  margin: 0; padding: 0; → Remove o espaçamento padrão que os navegadores
+  adicionam por conta própria a elementos como <h1>, <p>, <ul>, etc.
+  Sem isso, cada navegador teria espaçamentos diferentes → inconsistência visual.
+
+  box-sizing: border-box; → Muda o modelo de caixa do CSS.
+  Por padrão (content-box), width/height NÃO incluem padding e border.
+  Com border-box, width/height INCLUEM padding e border.
+  Exemplo: um elemento com width:200px, padding:20px
+    - content-box → largura total real = 200 + 40 = 240px (confuso!)
+    - border-box  → largura total real = 200px (o padding é descontado do interior)
+  border-box é mais intuitivo e é o padrão preferido em projetos modernos.
+*/
 
 :root {
-  --bg: #f0f4f9;
-  --bg2: #e4ebf5;
-  --card: #ffffff;
-  --text: #1a1a2e;
-  --text2: #5a6478;
-  --border: #dce3ef;
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --danger: #e53e3e;
-  --success: #16a34a;
-  --warning: #d97706;
-  --radius: 14px;
-  --shadow: 0 4px 20px rgba(0,0,0,0.07);
-  --shadow-lg: 0 10px 40px rgba(0,0,0,0.14);
-  --font-main: 'DM Sans', sans-serif;
-  --font-mono: 'Space Mono', monospace;
+  /* 
+    :root → seleciona o elemento raiz do documento (equivalente ao <html>).
+    Aqui declaramos as VARIÁVEIS CSS (Custom Properties).
+    
+    Variáveis CSS começam com -- (dois hífens) e são definidas com var(--nome).
+    Vantagens:
+    1. Centraliza todos os valores de design em um único lugar
+    2. Reutiliza os mesmos valores em todo o arquivo
+    3. Facilita a manutenção: mudar aqui reflete em todo o projeto
+    4. Permite temas (dark mode) com apenas uma sobrescrita
+  */
+
+  /* PALETA DE CORES */
+  --bg: #f0f4f9;        /* Cor de fundo principal — azul-acinzentado bem claro */
+  --bg2: #e4ebf5;       /* Fundo secundário — ligeiramente mais escuro */
+  --card: #ffffff;      /* Fundo dos cards — branco puro */
+  --text: #1a1a2e;      /* Texto principal — quase preto azulado */
+  --text2: #5a6478;     /* Texto secundário/sutil — cinza médio */
+  --border: #dce3ef;    /* Cor das bordas e divisórias — cinza claro */
+  --primary: #2563eb;   /* Cor principal — azul vibrante */
+  --primary-dark: #1d4ed8; /* Tom mais escuro do azul (hover) */
+  --danger: #e53e3e;    /* Vermelho — erros, exclusão, logout */
+  --success: #16a34a;   /* Verde — sucesso, menção MB */
+  --warning: #d97706;   /* Laranja — alerta, menção R, botão editar */
+
+  /* DIMENSÕES E EFEITOS */
+  --radius: 14px;       /* Raio das bordas arredondadas dos cards */
+  --shadow: 0 4px 20px rgba(0,0,0,0.07);   /* Sombra suave (light mode) */
+  --shadow-lg: 0 10px 40px rgba(0,0,0,0.14); /* Sombra maior (hover) */
+
+  /* TIPOGRAFIA */
+  --font-main: 'DM Sans', sans-serif;   /* Fonte principal — moderna e legível */
+  --font-mono: 'Space Mono', monospace; /* Fonte monoespaçada — para números/notas */
+  /*
+    sans-serif e monospace são famílias genéricas de fallback.
+    Se DM Sans/Space Mono não carregarem, o navegador usa uma fonte
+    padrão da família correspondente.
+  */
 }
+
+/* =====================================================================
+   ESTILO BASE DO BODY
+   Configurações globais que se aplicam à página toda.
+====================================================================== */
 
 body {
-  font-family: var(--font-main);
-  background: var(--bg);
-  color: var(--text);
+  font-family: var(--font-main); /* Usa a variável de fonte definida em :root */
+  background: var(--bg);         /* Cor de fundo da página */
+  color: var(--text);            /* Cor padrão do texto */
   min-height: 100vh;
+  /*
+    vh = viewport height (altura da janela visível).
+    min-height: 100vh → a página tem no mínimo a altura total da tela.
+    Evita que o fundo fique em branco em páginas com pouco conteúdo.
+  */
   transition: background 0.3s, color 0.3s;
+  /*
+    transition: anima a transição entre valores de propriedades CSS.
+    Aqui anima background e color em 0.3 segundos.
+    Cria a transição suave ao alternar entre claro e escuro (dark mode).
+    Formato: propriedade duração (e curva de animação, padrão: ease).
+  */
 }
 
-/* === DARK MODE === */
+/* =====================================================================
+   DARK MODE
+   Redefine as variáveis de cor quando a classe "dark" está no <body>.
+   O JavaScript adiciona/remove essa classe via classList.toggle().
+====================================================================== */
+
 body.dark {
-  --bg: #0f0f1a;
-  --bg2: #1a1a2e;
-  --card: #1e1e30;
-  --text: #e8eaf6;
-  --text2: #9e9eb8;
-  --border: #2e2e4e;
-  --shadow: 0 4px 20px rgba(0,0,0,0.3);
+  /*
+    Sobrescreve APENAS as variáveis de cor — tudo que usa var(--bg),
+    var(--card), etc. automaticamente muda de valor.
+    Nenhuma outra propriedade precisa ser repetida!
+    Isso é o poder das variáveis CSS para temas.
+  */
+  --bg: #0f0f1a;         /* Fundo muito escuro — quase preto */
+  --bg2: #1a1a2e;        /* Fundo secundário escuro */
+  --card: #1e1e30;       /* Cards em cinza-escuro azulado */
+  --text: #e8eaf6;       /* Texto claro — quase branco */
+  --text2: #9e9eb8;      /* Texto secundário — cinza claro */
+  --border: #2e2e4e;     /* Bordas escuras */
+  --shadow: 0 4px 20px rgba(0,0,0,0.3); /* Sombra mais intensa no escuro */
 }
 
-/* === SCROLLBAR === */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+/* =====================================================================
+   BARRA DE ROLAGEM PERSONALIZADA
+   Substitui a scrollbar padrão do navegador por uma versão discreta.
+   Suporte: Chrome, Edge, Safari (webkit). Firefox usa scrollbar-width.
+====================================================================== */
 
-/* === CONTAINER === */
+::-webkit-scrollbar { width: 6px; } /* Largura fina */
+::-webkit-scrollbar-track { background: transparent; } /* Trilha invisível */
+::-webkit-scrollbar-thumb {
+  background: var(--border); /* Cor do "polegar" deslizante */
+  border-radius: 99px;       /* Totalmente arredondado */
+}
+
+/* =====================================================================
+   CONTAINER PRINCIPAL
+   Centraliza e limita a largura do conteúdo na tela.
+====================================================================== */
+
 .container {
-  max-width: 1100px;
-  margin: 0 auto;
+  max-width: 1100px;  /* Largura máxima — em telas grandes não estica demais */
+  margin: 0 auto;     /* Centraliza horizontalmente (margens iguais dos lados) */
   padding: clamp(16px, 4vw, 40px) clamp(12px, 4vw, 24px);
+  /*
+    clamp(mínimo, preferido, máximo): função CSS responsiva.
+    padding cresce proporcionalmente com a tela (4vw = 4% da largura),
+    mas nunca sai do intervalo definido.
+    Tela pequena (320px): padding = 16px (mínimo)
+    Tela média (700px):   padding = 4% de 700 = 28px
+    Tela grande (1200px): padding = 40px (máximo)
+  */
 }
 
-/* === CARD === */
+/* =====================================================================
+   COMPONENTE: CARD
+   Unidade visual reutilizável — fundo branco, sombra, bordas arredondadas.
+====================================================================== */
+
 .card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+  border-radius: var(--radius);    /* Usa a variável --radius: 14px */
   padding: clamp(16px, 3vw, 28px);
   box-shadow: var(--shadow);
   transition: transform 0.2s, box-shadow 0.2s;
+  /* Prepara a transição suave para o efeito de hover */
 }
 
 .card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
+  /*
+    :hover → aplica os estilos quando o mouse está sobre o elemento.
+    Cria efeito de "levitar" ao passar o mouse.
+  */
+  transform: translateY(-3px);   /* Move 3px para cima */
+  box-shadow: var(--shadow-lg);  /* Sombra maior → reforça ilusão de elevação */
 }
 
-/* === ANIMAÇÃO === */
-.animate { animation: fadeUp 0.5s ease both; }
+/* =====================================================================
+   ANIMAÇÃO DE ENTRADA
+   Classe aplicada nos cards para aparecerem com animação ao carregar.
+====================================================================== */
+
+.animate {
+  animation: fadeUp 0.5s ease both;
+  /*
+    animation: nome duração curva modo-de-preenchimento
+    - fadeUp: nome da @keyframes definida abaixo
+    - 0.5s: duração de meio segundo
+    - ease: começa rápido, desacelera no final (curva suave)
+    - both: aplica o estado inicial ANTES de começar e mantém o final depois
+  */
+}
 
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to   { opacity: 1; transform: translateY(0); }
+  /*
+    @keyframes: define os estados de uma animação.
+    "from" = estado inicial (0%) | "to" = estado final (100%)
+  */
+  from {
+    opacity: 0;               /* Invisível no início */
+    transform: translateY(18px); /* 18px abaixo da posição final */
+  }
+  to {
+    opacity: 1;               /* Totalmente visível */
+    transform: translateY(0); /* Na posição correta */
+  }
 }
 
-/* === LOGIN === */
+/* =====================================================================
+   TELA DE LOGIN
+====================================================================== */
+
 #loginBox {
+  /*
+    # (ID selector) é mais específico que . (classe) e seleciona elemento único.
+    Centraliza o card de login vertical e horizontalmente na tela.
+  */
   max-width: 400px;
   margin: clamp(40px, 10vh, 100px) auto 0;
+  /*
+    Margem do topo: entre 40px e 100px, proporcional à altura da tela.
+    "auto 0" = centraliza horizontalmente (auto) e sem margem inferior (0).
+  */
   padding: clamp(24px, 5vw, 44px) clamp(20px, 5vw, 40px);
 }
 
 .login-icon {
-  font-size: clamp(36px, 8vw, 52px);
+  font-size: clamp(36px, 8vw, 52px); /* Emoji grande e responsivo */
   text-align: center;
   margin-bottom: 12px;
 }
 
 #loginBox h2 {
   font-size: clamp(1.3rem, 4vw, 1.7rem);
-  font-weight: 700;
+  /* rem = relativo ao tamanho de fonte do elemento raiz (geralmente 16px) */
+  font-weight: 700; /* Negrito */
   text-align: center;
 }
 
 .login-sub {
-  color: var(--text2);
-  margin: 6px 0 20px;
-  font-size: 0.88rem;
+  color: var(--text2);          /* Cinza sutil */
+  margin: 6px 0 20px;           /* Topo, lados, baixo */
+  font-size: 0.88rem;           /* Menor que o texto normal */
   text-align: center;
 }
 
-/* === LABELS === */
+/* =====================================================================
+   RÓTULOS DE CAMPOS (LABELS)
+====================================================================== */
+
 .field-label {
-  display: block;
+  display: block;               /* Garante que ocupe linha própria */
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--text2);
-  letter-spacing: 0.07em;
-  text-transform: uppercase;
+  letter-spacing: 0.07em;       /* Espaçamento entre letras — elegante */
+  text-transform: uppercase;    /* Converte para MAIÚSCULAS via CSS */
   margin-bottom: 6px;
 }
 
-/* === DIVIDER === */
+/* =====================================================================
+   DIVISOR VISUAL
+   Linha horizontal com texto no centro — técnica de flex + pseudo-elementos.
+====================================================================== */
+
 .divider {
   color: var(--text2);
   font-size: 0.8rem;
   margin: 20px 0 16px;
   display: flex;
-  align-items: center;
-  gap: 10px;
+  align-items: center; /* Centraliza verticalmente o texto e as linhas */
+  gap: 10px;           /* Espaço entre as linhas e o texto */
 }
 
 .divider::before,
 .divider::after {
+  /*
+    ::before e ::after: pseudo-elementos inseridos antes/depois do conteúdo.
+    content: "" → conteúdo vazio (necessário para o pseudo-elemento existir).
+    flex: 1 → cada linha cresce igualmente para preencher o espaço disponível.
+    Resultado: linha | texto | linha
+  */
   content: "";
   flex: 1;
   height: 1px;
   background: var(--border);
 }
 
-/* === NOVO USUÁRIO === */
+/* =====================================================================
+   GRUPO: NOVO USUÁRIO
+   Layout de linha com input e botão lado a lado.
+====================================================================== */
+
 .novo-usuario {
-  display: flex;
-  gap: 8px;
-  align-items: flex-start;
+  display: flex;           /* Disposição em linha */
+  gap: 8px;                /* Espaço entre os filhos */
+  align-items: flex-start; /* Alinha pelo topo (para quando alturas diferem) */
 }
 
 .novo-usuario input  { margin-bottom: 0; flex: 1; }
+/* flex: 1 → o input cresce para preencher o espaço disponível */
 .novo-usuario button { white-space: nowrap; flex-shrink: 0; }
+/* white-space: nowrap → texto do botão não quebra em múltiplas linhas */
+/* flex-shrink: 0 → botão não encolhe (mantém tamanho fixo) */
 
-/* === TOP BAR === */
+/* =====================================================================
+   BARRA SUPERIOR DO SISTEMA
+====================================================================== */
+
 .top-bar {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-between; /* Empurra título para esquerda e botões para direita */
+  align-items: center;            /* Centraliza verticalmente */
   margin-bottom: 24px;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* Em telas pequenas, quebra para segunda linha */
 }
 
 .top-title {
   display: flex;
   align-items: center;
   gap: 12px;
-  min-width: 0;
+  min-width: 0; /* Permite que o texto trunce (importante para overflow) */
 }
 
 .top-icon { font-size: clamp(24px, 5vw, 34px); flex-shrink: 0; }
@@ -164,103 +321,152 @@ body.dark {
 .top-title h1 {
   font-size: clamp(1rem, 3.5vw, 1.4rem);
   font-weight: 700;
-  line-height: 1.2;
-  white-space: nowrap;
+  line-height: 1.2;    /* Altura da linha (1.2 = 120% do tamanho da fonte) */
+  white-space: nowrap; /* Não quebra em múltiplas linhas */
 }
 
 .usuario-label {
   font-size: clamp(0.7rem, 2vw, 0.82rem);
   color: var(--text2);
-  font-family: var(--font-mono);
-  display: block;
+  font-family: var(--font-mono); /* Fonte monoespaçada para o nome do usuário */
+  display: block; /* Garante linha separada do h1 */
 }
 
 .acoes-topo {
   display: flex;
   gap: 8px;
-  flex-wrap: nowrap;
+  flex-wrap: nowrap; /* Botões sempre em linha (nunca quebram) */
 }
 
-/* === GRID DASHBOARD === */
+/* =====================================================================
+   GRID DO DASHBOARD
+   Layout de 2 colunas com CSS Grid.
+====================================================================== */
+
 .grid-dashboard {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: clamp(12px, 2vw, 20px);
+  grid-template-columns: 1fr 1fr; /* 2 colunas de largura igual */
+  gap: clamp(12px, 2vw, 20px);    /* Espaço entre os cards */
+  /*
+    1fr = 1 fração do espaço disponível.
+    Se o container tem 800px e há 2 colunas de 1fr:
+    cada coluna tem (800 - gap) / 2 px de largura.
+  */
 }
 
-.full { grid-column: span 2; }
+.full {
+  grid-column: span 2;
+  /*
+    span 2 → o elemento ocupa 2 colunas (toda a largura do grid).
+    Usado nos cards de Resultados e Gráfico.
+  */
+}
 
-/* === TÍTULOS === */
+/* =====================================================================
+   TÍTULOS DOS CARDS
+====================================================================== */
+
 h3 {
   font-size: clamp(0.88rem, 2.5vw, 1rem);
   font-weight: 700;
   margin-bottom: 14px;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.02em; /* Leve espaçamento entre letras */
 }
 
-/* === BOTÕES === */
+/* =====================================================================
+   BOTÕES
+   Estilo base e variações.
+====================================================================== */
+
 button {
-  border: none;
+  border: none;            /* Remove borda padrão do navegador */
   border-radius: 10px;
-  background: var(--primary);
+  background: var(--primary); /* Azul por padrão */
   color: white;
   padding: clamp(9px, 2vw, 12px) clamp(12px, 2.5vw, 18px);
-  font-family: var(--font-main);
+  font-family: var(--font-main); /* Garante a mesma fonte (botões usam fonte do sistema por padrão) */
   font-size: clamp(0.8rem, 2vw, 0.9rem);
-  font-weight: 600;
-  display: inline-flex;
+  font-weight: 600;  /* Semi-negrito */
+  display: inline-flex;       /* Permite gap entre ícone e texto */
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  cursor: pointer;
+  gap: 5px;                   /* Espaço entre ícone emoji e texto */
+  cursor: pointer;            /* Cursor de mãozinha ao passar o mouse */
   transition: background 0.2s, transform 0.1s;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; /* Remove delay de 300ms no toque mobile */
+  -webkit-tap-highlight-color: transparent; /* Remove destaque azul ao tocar no iOS */
 }
 
-button:hover  { background: var(--primary-dark); }
+button:hover  { background: var(--primary-dark); } /* Tom mais escuro ao hover */
 button:active { transform: scale(0.96); }
+/* :active → aplica quando o botão está sendo pressionado */
+/* scale(0.96) → efeito de "apertar" o botão (96% do tamanho normal) */
 
-.btn-danger           { background: var(--danger); }
-.btn-danger:hover     { background: #c53030; }
+button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
 
-.btn-secondary        { background: transparent; color: var(--text); border: 1px solid var(--border); }
-.btn-secondary:hover  { background: var(--bg2); }
+/* Variação: Botão de perigo (vermelho) */
+.btn-danger       { background: var(--danger); }
+.btn-danger:hover { background: #c53030; } /* Tom mais escuro de vermelho */
 
-.btn-icon             { padding: 7px 10px; font-size: 0.82rem; border-radius: 8px; }
-.btn-edit             { background: var(--warning); color: white; }
-.btn-edit:hover       { background: #b45309; }
-.btn-del              { background: var(--danger); color: white; }
-.btn-del:hover        { background: #c53030; }
+/* Variação: Botão secundário (transparente com borda) */
+.btn-secondary       { background: transparent; color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--bg2); }
 
-/* === INPUTS & SELECTS === */
+/* Variação: Botões de ícone (compactos, usados na lista de resultados) */
+.btn-icon  { padding: 7px 10px; font-size: 0.82rem; border-radius: 8px; }
+.btn-edit  { background: var(--warning); color: white; } /* Laranja — editar */
+.btn-edit:hover { background: #b45309; }
+.btn-del   { background: var(--danger); color: white; }  /* Vermelho — excluir */
+.btn-del:hover  { background: #c53030; }
+
+/* =====================================================================
+   INPUTS E SELECTS
+   Estilo unificado para todos os campos de formulário.
+====================================================================== */
+
 input, select {
-  width: 100%;
+  width: 100%; /* Ocupa toda a largura do container pai */
   padding: clamp(9px, 2vw, 12px) clamp(10px, 2vw, 14px);
-  margin-bottom: 14px;
+  margin-bottom: 14px; /* Espaço abaixo do campo */
   border: 1.5px solid var(--border);
   border-radius: 9px;
-  background: var(--bg);
+  background: var(--bg);  /* Fundo levemente acinzentado */
   color: var(--text);
   font-family: var(--font-main);
   font-size: clamp(0.85rem, 2.5vw, 0.95rem);
   transition: border-color 0.2s, box-shadow 0.2s;
-  -webkit-appearance: none;
-  appearance: none;
+  -webkit-appearance: none; /* Remove estilo nativo do Safari/iOS */
+  appearance: none;         /* Remove estilo nativo dos navegadores */
+  /*
+    appearance: none → permite controle total do visual.
+    Sem isso, o select no iOS teria aquela aparência arredondada nativa.
+  */
 }
 
 input:focus, select:focus {
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
-  outline: none;
+  /*
+    :focus → aplica quando o elemento está selecionado (cursor dentro)
+    Anel de foco azul — essencial para acessibilidade e orientação visual.
+  */
+  border-color: var(--primary); /* Borda azul ao focar */
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15); /* Brilho sutil ao redor */
+  outline: none; /* Remove o outline padrão feio do navegador */
 }
 
-/* === LABELS DE NOTAS === */
+/* =====================================================================
+   GRADE DE NOTAS
+   Layout de 5 colunas para os campos N1 a N5.
+====================================================================== */
+
 .inputs-label {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 1fr); /* 5 colunas iguais */
   gap: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 4px; /* Espaço entre rótulos e campos */
 }
 
 .inputs-label span {
@@ -268,60 +474,69 @@ input:focus, select:focus {
   font-size: 0.75rem;
   font-weight: 700;
   color: var(--text2);
-  font-family: var(--font-mono);
+  font-family: var(--font-mono); /* Mono para N1, N2... */
   letter-spacing: 0.05em;
 }
 
-/* === GRID NOTAS === */
 .inputs {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(5, 1fr); /* 5 colunas — alinha com os rótulos */
   gap: 8px;
 }
 
 .inputs input {
-  text-align: center;
+  text-align: center;  /* Centraliza o número digitado */
   padding: 10px 4px;
-  margin-bottom: 0;
-  font-family: var(--font-mono);
+  margin-bottom: 0;    /* Sobrescreve o margin-bottom padrão de input */
+  font-family: var(--font-mono); /* Fonte monoespaçada para números */
   font-size: clamp(0.8rem, 2vw, 0.9rem);
 }
 
-/* === RESULTADOS === */
+/* =====================================================================
+   LISTA DE RESULTADOS
+   Cada disciplina é um item com layout flex.
+====================================================================== */
+
 .resultado {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Nome à esquerda, média à direita */
   align-items: center;
-  padding: 13px 0;
-  border-bottom: 1px solid var(--border);
+  padding: 13px 0; /* Espaço vertical (sem espaço horizontal) */
+  border-bottom: 1px solid var(--border); /* Linha separadora */
   gap: 10px;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* Em mobile, permite quebrar em múltiplas linhas */
 }
 
-.resultado:last-child { border-bottom: none; }
+.resultado:last-child {
+  border-bottom: none; /* Remove a linha do último item */
+  /* :last-child seleciona o último filho do mesmo pai */
+}
 
-.resultado-info { flex: 1; min-width: 120px; }
+.resultado-info {
+  flex: 1;           /* Cresce para preencher o espaço disponível */
+  min-width: 120px;  /* Largura mínima para não ficar muito estreito */
+}
 
 .resultado-info strong {
   font-size: clamp(0.85rem, 2.5vw, 0.95rem);
-  display: block;
+  display: block; /* Bloco próprio — o span de notas vai para a linha de baixo */
 }
 
 .resultado-info .notas-detalhe {
   font-size: clamp(0.68rem, 1.8vw, 0.78rem);
-  color: var(--text2);
-  font-family: var(--font-mono);
+  color: var(--text2);           /* Cinza sutil — informação secundária */
+  font-family: var(--font-mono); /* Mono para os números das notas */
   margin-top: 3px;
-  word-break: break-word;
+  word-break: break-word;        /* Quebra texto longo em telas pequenas */
 }
 
 .resultado-direita {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-shrink: 0;
+  flex-shrink: 0;      /* Não encolhe — mantém tamanho mínimo */
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-end; /* Alinha ao lado direito */
 }
 
 .media-box {
@@ -336,49 +551,74 @@ input:focus, select:focus {
   font-size: clamp(0.85rem, 2.5vw, 1rem);
 }
 
-/* === BADGES === */
+/* =====================================================================
+   BADGES DE MENÇÃO
+   Etiquetas coloridas com o conceito (MB, B, R, I).
+====================================================================== */
+
 .badge {
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: 20px;   /* Totalmente arredondado — formato de pílula */
   color: white;
   font-size: clamp(0.65rem, 1.8vw, 0.75rem);
   font-weight: 700;
   font-family: var(--font-mono);
   letter-spacing: 0.05em;
-  white-space: nowrap;
+  white-space: nowrap; /* Texto não quebra em múltiplas linhas */
 }
 
-.I  { background: var(--danger); }
-.R  { background: var(--warning); }
-.B  { background: var(--primary); }
-.MB { background: var(--success); }
-.NA { background: var(--text2); }
+/* Cada classe aplica a cor correspondente à menção */
+.I  { background: var(--danger);  } /* Vermelho — Insuficiente */
+.R  { background: var(--warning); } /* Laranja  — Regular */
+.B  { background: var(--primary); } /* Azul     — Bom */
+.MB { background: var(--success); } /* Verde    — Muito Bom */
+.NA { background: var(--text2);   } /* Cinza    — Sem Nota */
 
-/* === EMPTY STATE === */
+/* =====================================================================
+   ESTADO VAZIO (EMPTY STATE)
+   Mensagem exibida quando não há disciplinas cadastradas.
+====================================================================== */
+
 .empty-msg {
   text-align: center;
   color: var(--text2);
   padding: 24px 0;
   font-size: 0.9rem;
   display: none;
+  /*
+    display: none → oculto por padrão.
+    O JavaScript altera para "block" quando a lista está vazia.
+  */
 }
 
-/* === GRÁFICO === */
+/* =====================================================================
+   CONTAINER DO GRÁFICO
+   Wrapper necessário para que o Chart.js respeite a altura definida.
+====================================================================== */
+
 .chart-wrap {
-  position: relative;
+  position: relative; /* Context para o canvas responsivo */
   height: clamp(180px, 30vw, 280px);
+  /*
+    Chart.js com maintainAspectRatio: false usa a altura do container pai.
+    clamp garante que seja grande o suficiente em qualquer tela.
+  */
 }
 
-/* === MODAL === */
+/* =====================================================================
+   MODAL DINÂMICO
+   Overlay escuro + caixa de diálogo centralizada.
+====================================================================== */
+
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
+  position: fixed;    /* Fixo na tela — não rola com o conteúdo */
+  inset: 0;           /* Shorthand para top:0, right:0, bottom:0, left:0 = cobre a tela toda */
+  background: rgba(0,0,0,0.5); /* Fundo semi-transparente (50% de opacidade) */
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9998;
-  padding: 16px;
+  align-items: center;     /* Centraliza verticalmente */
+  justify-content: center; /* Centraliza horizontalmente */
+  z-index: 9998; /* Fica acima de quase tudo (exceto toast com z-index 9999) */
+  padding: 16px;   /* Espaço nas bordas em mobile */
 }
 
 .modal-box {
@@ -386,7 +626,7 @@ input:focus, select:focus {
   border-radius: var(--radius);
   padding: clamp(20px, 5vw, 32px) clamp(16px, 5vw, 28px);
   max-width: 360px;
-  width: 100%;
+  width: 100%;        /* Responsivo — ocupa até max-width */
   text-align: center;
   box-shadow: var(--shadow-lg);
 }
@@ -394,7 +634,7 @@ input:focus, select:focus {
 .modal-box p {
   font-size: clamp(0.88rem, 2.5vw, 1rem);
   margin-bottom: 20px;
-  line-height: 1.5;
+  line-height: 1.5; /* Espaçamento entre linhas — melhora legibilidade */
 }
 
 .modal-box input { margin-bottom: 16px; }
@@ -403,62 +643,108 @@ input:focus, select:focus {
   display: flex;
   gap: 10px;
   justify-content: center;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* Em mobile, os botões podem quebrar para a linha de baixo */
 }
 
-/* === TOAST === */
+/* =====================================================================
+   TOAST (NOTIFICAÇÕES)
+   Mensagens temporárias no canto inferior direito.
+====================================================================== */
+
 .toast {
-  position: fixed;
-  bottom: clamp(12px, 3vw, 24px);
-  right: clamp(12px, 3vw, 24px);
+  position: fixed;          /* Fixo na tela independente do scroll */
+  bottom: clamp(12px, 3vw, 24px); /* Distância do rodapé */
+  right: clamp(12px, 3vw, 24px);  /* Distância da borda direita */
   padding: 12px 18px;
   border-radius: 10px;
   color: white;
   font-size: clamp(0.78rem, 2vw, 0.88rem);
   font-weight: 600;
-  opacity: 0;
-  transform: translateY(14px);
-  transition: all 0.3s;
-  z-index: 9999;
+  opacity: 0;               /* Invisível no estado inicial */
+  transform: translateY(14px); /* Levemente abaixo da posição final */
+  transition: all 0.3s;     /* Anima todas as propriedades em 0.3s */
+  z-index: 9999;            /* Nível mais alto — sempre visível */
   max-width: min(320px, calc(100vw - 24px));
-  pointer-events: none;
+  /*
+    min(): escolhe o menor entre dois valores.
+    Garante que o toast não ultrapasse a largura da tela.
+    calc() permite operações com unidades mistas.
+  */
+  pointer-events: none; /* Não captura cliques — o usuário clica "através" do toast */
   word-break: break-word;
 }
 
-.toast.show    { opacity: 1; transform: translateY(0); }
-.toast.sucesso { background: var(--success); }
-.toast.erro    { background: var(--danger); }
-.toast.info    { background: var(--primary); }
-
-/* === RESPONSIVO TABLET === */
-@media (max-width: 768px) {
-  .inputs-label span { font-size: 0.68rem; }
-  .inputs input      { font-size: 0.8rem; padding: 8px 2px; }
+.toast.show {
+  opacity: 1;               /* Totalmente visível */
+  transform: translateY(0); /* Na posição correta */
+  /* O CSS anima suavemente de opacity:0 + Y:14px para opacity:1 + Y:0 */
 }
 
-/* === RESPONSIVO MOBILE === */
+/* Variações de cor por tipo de mensagem */
+.toast.sucesso { background: var(--success); } /* Verde */
+.toast.erro    { background: var(--danger);  } /* Vermelho */
+.toast.info    { background: var(--primary); } /* Azul */
+
+/* =====================================================================
+   RESPONSIVIDADE — TABLET (≤768px)
+   Ajustes para telas médias como tablets em modo retrato.
+====================================================================== */
+
+@media (max-width: 768px) {
+  /*
+    @media: regras condicionais aplicadas apenas quando a condição é verdadeira.
+    max-width: 768px → aplica SOMENTE quando a tela tem no máximo 768px de largura.
+    
+    Media queries permitem criar layouts diferentes para diferentes tamanhos de tela
+    — o coração do design responsivo.
+  */
+  .inputs-label span { font-size: 0.68rem; } /* Reduz rótulos N1-N5 */
+  .inputs input      { font-size: 0.8rem; padding: 8px 2px; } /* Campos de nota menores */
+}
+
+/* =====================================================================
+   RESPONSIVIDADE — MOBILE (≤600px)
+   Ajustes significativos para smartphones.
+====================================================================== */
+
 @media (max-width: 600px) {
+
+  /* Grid de 2 colunas vira 1 coluna — cards empilhados verticalmente */
   .grid-dashboard { grid-template-columns: 1fr; }
-  .full           { grid-column: span 1; }
+  .full           { grid-column: span 1; } /* "full" perde sentido com 1 coluna */
 
-  .top-bar        { flex-direction: row; align-items: center; }
-  .btn-label      { display: none; }
+  /* Barra superior mantém linha única (evita quebra desnecessária) */
+  .top-bar { flex-direction: row; align-items: center; }
 
-  .resultado      { flex-direction: column; align-items: flex-start; }
+  /* Oculta textos dos botões da barra — mostra apenas os ícones emoji */
+  .btn-label { display: none; }
+  /*
+    Economiza espaço em mobile. Os ícones (📄, 🌙, 🚪) são suficientes
+    com o atributo title como tooltip.
+  */
+
+  /* Resultados viram coluna (nome em cima, média embaixo) */
+  .resultado        { flex-direction: column; align-items: flex-start; }
   .resultado-direita { width: 100%; justify-content: flex-start; margin-top: 6px; }
 
-  .modal-acoes    { flex-direction: column; }
-  .modal-acoes button { width: 100%; }
+  /* Botões do modal ocupam toda a largura (mais fácil de tocar) */
+  .modal-acoes             { flex-direction: column; }
+  .modal-acoes button      { width: 100%; }
 
+  /* Campos de nota mais compactos */
   .inputs { gap: 4px; }
   .inputs input { padding: 8px 2px; font-size: 0.75rem; }
   .inputs-label { gap: 4px; }
   .inputs-label span { font-size: 0.65rem; }
 }
 
-/* === RESPONSIVO MUITO PEQUENO === */
+/* =====================================================================
+   RESPONSIVIDADE — TELAS MUITO PEQUENAS (≤360px)
+   Smartphones mais compactos (ex: iPhone SE, Moto E antigo).
+====================================================================== */
+
 @media (max-width: 360px) {
   .inputs input      { padding: 6px 1px; font-size: 0.7rem; }
   .inputs-label span { font-size: 0.6rem; }
-  .acoes-topo        { gap: 4px; }
+  .acoes-topo        { gap: 4px; } /* Menos espaço entre botões da barra */
 }

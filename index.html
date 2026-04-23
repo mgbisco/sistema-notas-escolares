@@ -1,107 +1,407 @@
 <!DOCTYPE html>
+<!--
+  DOCTYPE: Declara ao navegador que este documento usa HTML5.
+  Sempre deve ser a primeira linha de um arquivo HTML.
+-->
+
 <html lang="pt-br">
+<!--
+  <html>: Elemento raiz — todo o conteúdo da página fica dentro dele.
+  O atributo lang="pt-br" informa ao navegador e leitores de tela
+  que o idioma principal da página é o Português do Brasil.
+  Isso melhora acessibilidade e SEO.
+-->
+
 <head>
+  <!--
+    <head>: Seção de metadados — informações SOBRE a página,
+    não visíveis diretamente pelo usuário (exceto o <title>).
+    Aqui configuramos codificação, responsividade, título,
+    fontes, scripts e estilos.
+  -->
+
   <meta charset="UTF-8">
+  <!--
+    charset="UTF-8": Define o conjunto de caracteres da página.
+    UTF-8 suporta praticamente todos os idiomas e símbolos do mundo,
+    incluindo acentos do Português (ã, é, ç, etc.).
+    Sem isso, caracteres especiais podem aparecer com erro.
+  -->
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!--
+    viewport: Configuração essencial para RESPONSIVIDADE.
+    - width=device-width → a largura da página se adapta ao tamanho da tela
+    - initial-scale=1.0  → sem zoom inicial ao abrir a página
+    Sem essa linha, celulares renderizariam a página como se fosse desktop.
+  -->
+
   <meta name="theme-color" content="#2563eb">
+  <!--
+    theme-color: Define a cor da barra do navegador em dispositivos móveis
+    (principalmente Android/Chrome). É uma das configurações de PWA (Progressive Web App).
+    O valor #2563eb é um tom de azul.
+  -->
+
   <meta name="description" content="Sistema de Notas Escolar PWA">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Sistema Escolar PRO+">
+  <!--
+    description: Descrição resumida da página para mecanismos de busca (Google, Bing...).
+    Aparece como subtítulo nos resultados de pesquisa.
+    Importante para SEO (Search Engine Optimization).
+  -->
+
   <title>Sistema Escolar PRO+</title>
+  <!--
+    <title>: Texto que aparece na aba/guia do navegador.
+    É o único elemento do <head> visível diretamente para o usuário.
+    Também é usado como nome padrão ao salvar favoritos.
+  -->
+
+  <!-- ==========================================
+       CONFIGURAÇÕES DE PWA (Progressive Web App)
+       PWA permite instalar o site como se fosse um app nativo
+       no celular ou desktop, funcionando até offline.
+  =========================================== -->
 
   <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <!--
+    manifest: Vincula o arquivo manifest.json que configura o PWA.
+    O manifest contém ícone, nome, cor e modo de exibição do app.
+    É obrigatório para que o navegador ofereça a opção "Instalar app".
+  -->
+
+  <!-- ==========================================
+       FOLHA DE ESTILOS (CSS)
+       Conecta o arquivo externo de estilização da página.
+  =========================================== -->
+
   <link rel="stylesheet" href="style.css">
+  <!--
+    stylesheet: Importa o arquivo CSS externo que contém toda
+    a estilização visual da página (cores, fontes, tamanhos, layout...).
+    Separar CSS do HTML é uma boa prática — deixa o código mais organizado.
+  -->
+
+  <!-- ==========================================
+       FONTES DO GOOGLE
+       Carregamos duas fontes personalizadas via Google Fonts:
+       - DM Sans: fonte principal, moderna e legível
+       - Space Mono: fonte monoespaçada, usada nos números/notas
+  =========================================== -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <!--
+    preconnect: Dica ao navegador para pré-estabelecer conexão com
+    o servidor do Google Fonts antes que o recurso seja solicitado.
+    Melhora a performance de carregamento das fontes.
+  -->
+
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <!--
+    Importa as fontes DM Sans (pesos 400, 500, 700) e Space Mono (pesos 400, 700).
+    display=swap: faz o texto aparecer imediatamente com uma fonte padrão
+    enquanto as fontes personalizadas carregam — evita "flash" em branco.
+  -->
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- ==========================================
+       BIBLIOTECAS EXTERNAS (via CDN)
+       CDN = Content Delivery Network — servidores distribuídos
+       que entregam arquivos JS prontos para uso.
+  =========================================== -->
+
+  <script src="libs/chart.umd.min.js"></script>
+  <!--
+    Chart.js: Biblioteca JavaScript para criação de gráficos interativos.
+    Usamos ela para gerar o gráfico de barras com o desempenho por disciplina.
+    Carregada via CDN (não precisamos baixar o arquivo).
+  -->
+
+  <script src="libs/jspdf.umd.min.js"></script>
+  <!--
+    jsPDF: Biblioteca JavaScript para gerar arquivos PDF diretamente no navegador.
+    Usamos ela para exportar o boletim escolar em PDF, sem precisar de servidor.
+    ".umd.min.js" = versão minificada (comprimida) compatível com módulos universais.
+  -->
+
 </head>
-<body>
 
+<body>
+<!--
+  <body>: Contém TODO o conteúdo visível da página — textos, imagens, formulários, etc.
+  Tudo que o usuário vê e interage fica aqui.
+-->
+
+<!-- ==========================================
+     CONTAINER PRINCIPAL
+     Envolve todo o conteúdo para centralizar e limitar a largura máxima.
+     A estilização é feita no CSS pela classe "container".
+=========================================== -->
 <div class="container">
 
-  <!-- LOGIN -->
+  <!-- ==========================================
+       SEÇÃO: TELA DE LOGIN
+       Exibida ao abrir o sistema. Permite selecionar ou criar um usuário.
+       O atributo id="loginBox" é usado pelo JavaScript para mostrar/ocultar esta tela.
+  =========================================== -->
   <div id="loginBox" class="card animate">
+    <!--
+      class="card" → aplica o estilo de cartão (fundo branco, sombra, bordas arredondadas)
+      class="animate" → aplica a animação de entrada (fadeUp definida no CSS)
+    -->
+
     <div class="login-icon">📘</div>
+    <!-- Ícone decorativo do sistema, estilizado no CSS com tamanho grande e centralizado -->
+
     <h2>Sistema de Notas</h2>
+    <!-- Título principal da tela de login -->
+
     <p class="login-sub">Selecione seu perfil para continuar</p>
+    <!-- Subtítulo/instrução para o usuário -->
 
     <label class="field-label">Usuário</label>
+    <!-- 
+      <label>: Rótulo descritivo para o campo abaixo.
+      class="field-label" → estilo de label em maiúsculas pequenas (definido no CSS)
+    -->
+
     <select id="listaUsuarios"></select>
+    <!--
+      <select>: Campo de seleção (dropdown/lista suspensa).
+      id="listaUsuarios" → referenciado no JavaScript para popular as opções
+      com os usuários salvos no localStorage.
+      As opções são criadas dinamicamente via JavaScript (função carregarUsuarios).
+    -->
+
     <button onclick="login()">Entrar</button>
+    <!--
+      <button>: Botão clicável.
+      onclick="login()" → ao clicar, chama a função login() do script.js,
+      que verifica o usuário selecionado e exibe o sistema principal.
+    -->
 
     <div class="divider">ou cadastre um novo usuário</div>
+    <!-- Separador visual entre as duas formas de acesso -->
 
     <label class="field-label">Novo usuário</label>
+
     <div class="novo-usuario">
+      <!--
+        Agrupa o campo de texto e o botão lado a lado (display: flex no CSS)
+      -->
+
       <input id="novoUsuario" placeholder="Digite o nome..." maxlength="30">
+      <!--
+        <input>: Campo de texto livre.
+        id="novoUsuario" → referenciado no JS para ler o nome digitado.
+        placeholder → texto cinza exibido quando o campo está vazio (dica ao usuário).
+        maxlength="30" → limita a digitação a 30 caracteres para evitar nomes excessivos.
+      -->
+
       <button onclick="cadastrarUsuario()" class="btn-secondary">+ Adicionar</button>
+      <!--
+        Chama cadastrarUsuario() para salvar o novo usuário no localStorage.
+        class="btn-secondary" → estilo visual diferente (fundo transparente, borda).
+      -->
     </div>
   </div>
+  <!-- FIM DA TELA DE LOGIN -->
 
-  <!-- SISTEMA -->
+  <!-- ==========================================
+       SEÇÃO: SISTEMA PRINCIPAL
+       Oculto no início (display:none). Exibido após o login bem-sucedido.
+       Contém o painel completo de disciplinas, notas e gráfico.
+  =========================================== -->
   <div id="sistema" style="display:none;">
+    <!--
+      style="display:none" → oculta este bloco ao carregar a página.
+      O JavaScript altera para "block" após o login, tornando-o visível.
+      Usar display:none é mais eficiente que criar/destruir elementos.
+    -->
 
+    <!-- ==========================================
+         BARRA SUPERIOR (HEADER)
+         Exibe o título, nome do usuário logado e botões de ação.
+    =========================================== -->
     <div class="top-bar">
+
       <div class="top-title">
+        <!-- Agrupa ícone + título + nome do usuário -->
         <span class="top-icon">📘</span>
         <div>
           <h1>Sistema de Notas</h1>
           <span id="nomeUsuario" class="usuario-label"></span>
+          <!--
+            id="nomeUsuario" → o JavaScript escreve aqui o nome do usuário logado.
+            Inicialmente vazio; preenchido pela função login().
+          -->
         </div>
       </div>
+
       <div class="acoes-topo">
-        <button onclick="exportarPDF()" title="Exportar PDF">📄 <span class="btn-label">PDF</span></button>
+        <!-- Grupo de botões de ação no canto superior direito -->
+
+        <button id="btnInstalar" class="btn-secondary" onclick="instalarApp()" title="Instalar app" hidden>
+          📲 <span class="btn-label">Instalar</span>
+        </button>
+        <!--
+          Botão exibido quando o navegador liberar a instalação do PWA.
+          hidden → começa invisível e o JavaScript decide quando mostrar.
+        -->
+
+        <button onclick="exportarPDF()" title="Exportar PDF">
+          📄 <span class="btn-label">PDF</span>
+        </button>
+        <!--
+          Gera e baixa o boletim em PDF ao clicar.
+          title="Exportar PDF" → tooltip (dica) exibida ao passar o mouse.
+          <span class="btn-label"> → texto que some em telas pequenas (display:none no CSS mobile).
+        -->
+
         <button onclick="toggleDarkMode()" id="btnDark" title="Modo escuro">🌙</button>
-        <button onclick="confirmarLogout()" class="btn-danger" title="Sair">🚪 <span class="btn-label">Sair</span></button>
+        <!--
+          Alterna entre modo claro e escuro.
+          id="btnDark" → o JS troca o ícone entre 🌙 e ☀️ conforme o modo.
+        -->
+
+        <button onclick="confirmarLogout()" class="btn-danger" title="Sair">
+          🚪 <span class="btn-label">Sair</span>
+        </button>
+        <!--
+          Exibe modal de confirmação antes de fazer logout.
+          class="btn-danger" → botão vermelho (definido no CSS).
+        -->
       </div>
     </div>
+    <!-- FIM DA BARRA SUPERIOR -->
 
+    <!-- ==========================================
+         GRADE DO DASHBOARD
+         Layout em 2 colunas usando CSS Grid (definido no CSS como grid-dashboard).
+         Os cards "full" ocupam as 2 colunas (span 2).
+    =========================================== -->
     <div class="grid-dashboard">
 
-      <!-- CADASTRO -->
+      <!-- ==========================================
+           CARD 1: CADASTRO DE DISCIPLINA
+           Permite ao usuário criar uma nova matéria.
+      =========================================== -->
       <div class="card animate">
         <h3>➕ Cadastrar Disciplina</h3>
+
         <input id="nomeDisciplina" placeholder="Ex: Matemática" maxlength="40">
+        <!--
+          Campo para digitar o nome da disciplina.
+          id="nomeDisciplina" → lido no JS pela função cadastrarDisciplina().
+        -->
+
         <button onclick="cadastrarDisciplina()">+ Cadastrar</button>
+        <!-- Salva a disciplina na lista do usuário atual -->
       </div>
 
-      <!-- NOTAS -->
+      <!-- ==========================================
+           CARD 2: LANÇAMENTO DE NOTAS
+           Permite selecionar uma disciplina e informar até 5 notas.
+      =========================================== -->
       <div class="card animate">
         <h3>📝 Lançar Notas</h3>
+
         <select id="disciplinaSelect" onchange="carregarNotasDisciplina()"></select>
+        <!--
+          Lista das disciplinas cadastradas.
+          onchange → toda vez que o usuário muda a disciplina selecionada,
+          a função carregarNotasDisciplina() é chamada para preencher
+          os campos de nota com os valores já salvos dessa disciplina.
+        -->
+
         <div class="inputs-label">
+          <!-- Rótulos visuais para cada campo de nota (N1, N2, N3, N4, N5) -->
           <span>N1</span><span>N2</span><span>N3</span><span>N4</span><span>N5</span>
         </div>
+
         <div class="inputs">
+          <!-- 5 campos de nota dispostos em grade (CSS Grid com 5 colunas) -->
           <input class="nota" placeholder="0.0" type="number" min="0" max="10" step="0.1">
           <input class="nota" placeholder="0.0" type="number" min="0" max="10" step="0.1">
           <input class="nota" placeholder="0.0" type="number" min="0" max="10" step="0.1">
           <input class="nota" placeholder="0.0" type="number" min="0" max="10" step="0.1">
           <input class="nota" placeholder="0.0" type="number" min="0" max="10" step="0.1">
+          <!--
+            type="number" → teclado numérico em celulares, validação básica do navegador.
+            min="0" max="10" → limites aceitáveis para notas escolares.
+            step="0.1" → permite decimais com uma casa (ex: 7.5, 8.3).
+            class="nota" → o JS seleciona TODOS esses campos com document.querySelectorAll(".nota").
+          -->
         </div>
+
         <button onclick="salvarNotas()" style="margin-top:4px;">💾 Salvar Notas</button>
+        <!--
+          Lê os valores dos campos .nota e salva no localStorage.
+          style="margin-top:4px" → espaçamento inline (pequena exceção ao CSS separado).
+        -->
       </div>
 
-      <!-- RESULTADOS -->
+      <!-- ==========================================
+           CARD 3: RESULTADOS
+           Lista todas as disciplinas com suas médias e menções.
+           Ocupa as 2 colunas do grid (classe "full").
+      =========================================== -->
       <div class="card animate full">
         <h3>📋 Resultados</h3>
+
         <div id="listaDisciplinas"></div>
+        <!--
+          Container vazio — o JavaScript preenche dinamicamente aqui
+          os cards de cada disciplina com nome, notas, média e menção.
+        -->
+
         <p id="semDisciplinas" class="empty-msg">Nenhuma disciplina cadastrada ainda.</p>
+        <!--
+          Mensagem exibida quando não há disciplinas cadastradas.
+          O JS alterna sua visibilidade (display:none / display:block).
+        -->
       </div>
 
-      <!-- GRÁFICO -->
+      <!-- ==========================================
+           CARD 4: GRÁFICO DE DESEMPENHO
+           Gráfico de barras gerado pelo Chart.js.
+           Ocupa as 2 colunas do grid (classe "full").
+      =========================================== -->
       <div class="card animate full">
         <h3>📊 Desempenho</h3>
+
         <div class="chart-wrap">
+          <!-- Wrapper com altura definida no CSS para o gráfico não crescer infinitamente -->
+
           <canvas id="graficoDisciplinas"></canvas>
+          <!--
+            <canvas>: Elemento HTML5 para desenho de gráficos e animações via JavaScript.
+            O Chart.js usa este elemento para renderizar o gráfico de barras.
+            id="graficoDisciplinas" → referenciado no JS para criar/atualizar o gráfico.
+          -->
         </div>
       </div>
 
     </div>
+    <!-- FIM DA GRADE DO DASHBOARD -->
+
   </div>
+  <!-- FIM DO SISTEMA PRINCIPAL -->
 
 </div>
+<!-- FIM DO CONTAINER PRINCIPAL -->
 
+<!-- ==========================================
+     SCRIPT PRINCIPAL
+     Carregado no final do <body> (e não no <head>) para garantir
+     que o HTML seja parseado antes de o JavaScript tentar
+     acessar os elementos da página.
+=========================================== -->
 <script src="script.js"></script>
+
 </body>
 </html>
